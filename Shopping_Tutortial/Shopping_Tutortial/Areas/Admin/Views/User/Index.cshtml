@@ -1,0 +1,56 @@
+﻿@model IEnumerable<UserWithRoleViewModel>
+@using Shopping_Tutortial.Models.ViewModels
+
+@{
+    ViewData["title"] = "List User";
+    Paginate pager = new Paginate();
+    int pageNo = 0;
+    if (ViewBag.Pager != null)  // Thay đổi kiểm tra ViewBag.Pager
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+
+<h1>List User</h1>
+<a class="btn btn-warning btn-sm" asp-action="Create" asp-controller="User">Add User</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">User Name</th>
+            <th scope="col">User Email</th>
+            <th scope="col">User Phone</th>
+            <th scope="col">User Roles</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var userWithRoles in Model)
+        {
+            <tr>
+                <th>@userWithRoles.User.Id.ToString().Substring(userWithRoles.User.Id.ToString().Length - 8)</th> <!-- Hiển thị 8 ký tự cuối -->
+                <td>@userWithRoles.User.UserName</td>
+                <td>@userWithRoles.User.Email</td>
+                <td>@userWithRoles.User.PhoneNumber</td>
+                <td>
+                    @if (userWithRoles.Roles != null && userWithRoles.Roles.Any())
+                    {
+                        @string.Join(", ", userWithRoles.Roles) <!-- Hiển thị tất cả các vai trò của user -->
+                    }
+                    else
+                    {
+                        <span>Chưa có vai trò</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" class="btn btn-warning btn-sm" asp-controller="User" asp-route-Id="@userWithRoles.User.Id">Edit</a>
+                    <a asp-action="Delete" class="btn btn-danger btn-sm confirmDeletion" asp-controller="User" asp-route-id="@userWithRoles.User.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<partial name="_paging" model="@pager" />
